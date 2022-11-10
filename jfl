@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    stages {
+       
+       stage('Git CheckOut') {
+           steps {
+                 git branch: 'main', url: 'https://github.com/n4devops/mjwebdockcomp.git'
+           }
+                       }    
+     
+       stage('MAVEN - Clean') {
+           steps {
+                 sh 'mvn clean'
+           }        }       
+      
+        stage('MAVEN - Package') {
+           steps {
+                 sh 'mvn package'           }        }        
+     
+       stage('Archive') {
+           steps {
+                 archiveArtifacts artifacts: 'target/*.war', followSymlinks: false
+           }
+        } 
+         
+         stage('Docker compose build and run') {
+           steps {
+              
+                sh 'docker-compose up -d' 
+                
+          }}
+         
+    }
+}
